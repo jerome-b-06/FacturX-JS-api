@@ -1,0 +1,42 @@
+{
+  "name": "facturx-js-api",
+  "version": "1.0.0",
+  "description": "Electronic invoice creation",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest"
+  },
+  "author": "Jerome",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.2.1",
+    "express": "^5.2.1",
+    "handlebars": "^4.7.9",
+    "pdf-lib": "^1.17.1",
+    "pg": "^8.20.0",
+    "puppeteer": "^24.42.0",
+    "typescript-eslint": "^8.59.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/handlebars": "^4.1.0",
+    "@types/node": "^25.6.0",
+    "@types/pg": "^8.20.0",
+    "nodemon": "^3.1.14",
+    "prisma": "^7.8.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
+  }
+}
