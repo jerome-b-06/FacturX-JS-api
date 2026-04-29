@@ -4,6 +4,7 @@ import cors from 'cors';
 import {errorHandler} from "./middleware/errorHandler.js";
 import {v4 as uuidv4} from 'uuid';
 import {createLogger} from "./lib/logger.js";
+import companyRoutes from "./routes/companyRoutes.js";
 
 const appLogger = createLogger('Express');
 
@@ -63,6 +64,10 @@ function logResponse(res: Response, startTime: number, body: any) {
 }
 
 
+// Mount routers with /api/v1 prefix
+const apiV1 = express.Router();
+apiV1.use('/companies', companyRoutes);
+app.use('/api/v1', apiV1);
 
 
 // ========================================
