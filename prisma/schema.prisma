@@ -11,3 +11,82 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ----------------------------------------------------
+// ENUMS
+// ----------------------------------------------------
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+}
+
+// ----------------------------------------------------
+// MODELS
+// ----------------------------------------------------
+
+model Company {
+  id          String    @id @default(uuid())
+  name        String
+  address     String
+  zipCode     String
+  city        String
+  countryCode String
+  siret       String    @unique
+  vatNumber   String? // champ optionnel
+  email       String
+  invoices    Invoice[]
+  pdfTemplate String?   @db.Text // HTML du template de la facture
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Customer {
+  id          String    @id @default(uuid())
+  name        String
+  address     String
+  zipCode     String
+  city        String
+  countryCode String
+  siret       String?   @unique
+  vatNumber   String? // champ optionnel
+  email       String
+  invoices    Invoice[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Invoice {
+  id            String        @id @default(uuid())
+  invoiceNumber String        @unique
+  date          DateTime
+  dueDate       DateTime
+  status        InvoiceStatus @default(DRAFT)
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  items Item[]
+
+  // Totaux
+  totalHT  Float
+  totalVAT Float
+  totalTTC Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id          String  @id @default(uuid())
+  description String
+  quantity    Int
+  unitPrice   Float
+  vatRate     Float
+  totalHT     Float
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
