@@ -3,6 +3,7 @@ import {createCompany, deleteCompany, getAllCompanies, updateCompany} from "../s
 import {validationHandler} from "../middleware/validationHandler.js"
 import {createCompanySchema, updateCompanySchema} from "../schemas/companySchema.js"
 import {asyncHandler} from "../middleware/asyncHandler.js";
+import invoiceRoutes from "./invoiceRoutes.js";
 
 const router = Router();
 
@@ -17,5 +18,8 @@ router.put('/:id', validationHandler(updateCompanySchema), asyncHandler(updateCo
 //
 // // DELETE /companies/:id
 router.delete('/:id', asyncHandler(deleteCompany));
+
+// Nesting invoice routes under /companies/:companyId/invoices
+router.use('/:companyId/invoices', invoiceRoutes);
 
 export default router;
