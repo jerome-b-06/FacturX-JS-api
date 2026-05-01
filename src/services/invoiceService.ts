@@ -73,7 +73,7 @@ export const createInvoice = async (req: Request, res: Response, _next: NextFunc
             },
             customer: customerId
                 ? {connect: {id: customerId}}
-                : {create: customer}
+                : {create: {...customer, companyId}}
         },
         include: {items: true}
     });

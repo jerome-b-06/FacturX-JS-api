@@ -36,6 +36,7 @@ model Company {
   vatNumber   String? // champ optionnel
   email       String
   invoices    Invoice[]
+  customers   Customer[]
   pdfTemplate String?   @db.Text // HTML du template de la facture
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -52,6 +53,8 @@ model Customer {
   vatNumber   String? // champ optionnel
   email       String
   invoices    Invoice[]
+  companyId   String
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -67,7 +70,7 @@ model Invoice {
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   customerId String
-  customer   Customer @relation(fields: [customerId], references: [id])
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
 
   items Item[]
 
