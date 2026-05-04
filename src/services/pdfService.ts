@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer';
 import Handlebars from 'handlebars';
 import { PDFDocument } from 'pdf-lib';
+import { pdfConfig } from '../lib/pdfConfig.js';
 
 export const PdfService = {
     generateVisualPdf: async (templateHtml: string, data: any): Promise<Buffer> => {
@@ -9,7 +10,7 @@ export const PdfService = {
         const htmlContent = template(data);
 
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: pdfConfig.headless,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
@@ -19,9 +20,15 @@ export const PdfService = {
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
         const pdfUint8Array = await page.pdf({
-            format: 'A4',
-            printBackground: true, // Crucial to keep your CSS colors and backgrounds
-            margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' }
+            format: pdfConfig.format,
+            printBackground: pdfConfig.printBackground, // Crucial to keep your CSS colors and backgrounds
+            scale: pdfConfig.scale,
+            margin: {
+                top: pdfConfig.marginTop,
+                right: pdfConfig.marginRight,
+                bottom: pdfConfig.marginBottom,
+                left: pdfConfig.marginLeft
+            }
         });
 
         await browser.close();
