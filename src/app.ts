@@ -6,19 +6,34 @@ import {v4 as uuidv4} from 'uuid';
 import {createLogger} from "./lib/logger.js";
 import companyRoutes from "./routes/companyRoutes.js";
 
+declare global {
+    namespace Express {
+        interface Request {
+            id?: string;
+        }
+    }
+}
+
 const appLogger = createLogger('Express');
+
+// Debug: Log current log level at startup
+appLogger.info(`Logger initialized with level: ${process.env.LOG_LEVEL || 'info'}`);
+appLogger.debug('Debug logging is enabled');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
-
+app.use(cors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 // ========================================
 //  LOGGING & CONTEXT MIDDLEWARE
 // ========================================
 
 // Add request ID for tracing
 app.use((req: Request, res: Response, next: NextFunction) => {
-    (req as any).id = uuidv4();
+    req.id = uuidv4();
     next();
 });
 
@@ -28,7 +43,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
     // Log request
     appLogger.debug(`→ ${req.method} ${req.path}`, {
-        requestId: (req as any).id,
+        requestId: req.id,
         ip: req.ip,
     });
 

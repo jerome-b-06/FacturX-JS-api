@@ -30,7 +30,7 @@ class Logger {
     constructor(private module: string) {
         try {
             const env = process.env as Env;
-            this.minLevel = this.levels[env["LOG_LEVEL"]] || this.levels.info;
+            this.minLevel = this.levels[env["LOG_LEVEL"]] ?? this.levels.info;
         } catch {
             // Env not yet loaded, default to info
             this.minLevel = this.levels.info;
@@ -46,7 +46,8 @@ class Logger {
 
         const metaStr = meta && Object.keys(meta).length > 0 ? JSON.stringify(meta) : '';
 
-        console[level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log'](
+        // Use console.log for all levels to ensure visibility
+        console.log(
             `${this.getPrefix(level)} [${this.module}] ${message}${metaStr ? ` ${metaStr}` : ''}`
         );
     }
