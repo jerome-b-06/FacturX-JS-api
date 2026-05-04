@@ -1,5 +1,11 @@
 import {Router} from 'express';
-import {createInvoice, deleteInvoice, getCompanyInvoices, updateInvoice} from "../services/invoiceService.js";
+import {
+    createInvoice,
+    deleteInvoice,
+    downloadInvoice,
+    getCompanyInvoices,
+    updateInvoice
+} from "../services/invoiceService.js";
 import {asyncHandler} from "../middleware/asyncHandler.js";
 import {validationHandler} from "../middleware/validationHandler.js";
 import {createInvoiceSchema, updateInvoiceSchema} from "../schemas/invoiceSchema.js";
@@ -14,5 +20,7 @@ router.post('/', validationHandler(createInvoiceSchema), asyncHandler(createInvo
 router.put('/:id', validationHandler(updateInvoiceSchema), asyncHandler(updateInvoice));
 // DELETE /invoices/:id
 router.delete('/:id', asyncHandler(deleteInvoice));
+
+router.get('/:id/download', asyncHandler(downloadInvoice));
 
 export default router;

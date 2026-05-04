@@ -2,6 +2,9 @@ import {prisma} from '../lib/prisma.js';
 import type {Request, Response, NextFunction} from "express"
 import type {Invoice, Item} from "../generated/prisma/client.js";
 import {AppError, APP_ERROR_CODES} from '../errors/AppError.js';
+import {defaultTemplate} from "../templates/defaultInvoice.js";
+import {PdfService} from "./pdfService.js";
+import {XmlService} from "./xmlService.js";
 
 interface InvoiceTotals {
     totalHT: number;
@@ -118,7 +121,7 @@ export const deleteInvoice = async (req: Request, res: Response, _next: NextFunc
     if (typeof id !== 'string' || typeof companyId !== 'string') {
         throw new AppError(
             APP_ERROR_CODES.INVALID_INPUT,
-            "L'identifiant est invalide.",
+            "Invalid ID.",
             400
         );
     }
@@ -127,4 +130,56 @@ export const deleteInvoice = async (req: Request, res: Response, _next: NextFunc
         where: {id, companyId},
     });
     res.status(204).send();
+}
+
+export const downloadInvoice = async (req: Request, res: Response, _next: NextFunction) => {
+
+    const {id, companyId} = req.params;
+    if (typeof id !== 'string' || typeof companyId !== 'string') {
+        throw new AppError(
+            APP_ERROR_CODES.INVALID_INPUT,
+            "Invalid ID.",
+            400
+        );
+    }
+
+    const {customer, company, items, ...invoice} = await prisma.invoice.findFirstOrThrow({
+        where: {
+            id,
+            companyId
+        },
+        include: {
+            items: true,
+            company: true,
+            customer: true
+        }
+    });
+
+    const templateData = {
+        customer,
+        company,
+        invoice: {
+            ...invoice,
+            date: new Date(invoice.date).toLocaleDateString('fr-FR'),
+            dueDate: new Date(invoice.dueDate).toLocaleDateString('fr-FR')
+        },
+        items
+    };
+
+    // le PDF (On utilise le template de la DB s'il existe, sinon le défaut)
+    const templateToUse = company.pdfTemplate || defaultTemplate;
+
+    // PDF Visuel
+    const visualPdfBuffer = await PdfService.generateVisualPdf(templateToUse, templateData);
+
+    // XML (CII Std)
+    const xmlContent = XmlService.generateCIIXml(customer, company, invoice, items);
+
+    const finalBuffer = await PdfService.attachFacturX(visualPdfBuffer, xmlContent);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    // 'inline' affiche le PDF dans le navigateur, 'attachment' force le téléchargement
+    res.setHeader('Content-Disposition', `inline; filename="Facture_${invoice.invoiceNumber}.pdf"`);
+    res.send(finalBuffer);
+
 }
