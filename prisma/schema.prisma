@@ -51,7 +51,7 @@ model Customer {
   countryCode String
   siret       String?   @unique
   vatNumber   String? // champ optionnel
-  email       String
+  email       String    @unique
   invoices    Invoice[]
   companyId   String
   company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
