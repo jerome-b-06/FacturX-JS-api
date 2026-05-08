@@ -8,6 +8,21 @@ export const getAllCompanies = async (_req: Request, res: Response, next: NextFu
     res.status(200).json(companies);
 }
 
+export const getCompany = async (req: Request, res: Response, next: NextFunction) => {
+    const {id} = req.params;
+    if (typeof id !== 'string') {
+        throw new AppError(
+            APP_ERROR_CODES.INVALID_INPUT,
+            "Invalid ID.",
+            400
+        );
+    }
+    const company: Company = await prisma.company.findUniqueOrThrow({
+        where: {id}
+    });
+    res.status(200).json(company);
+}
+
 export const createCompany = async (req: Request, res: Response, next: NextFunction) => {
     const newCompany: Company = await prisma.company.create({
         data: req.body

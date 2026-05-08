@@ -7,6 +7,7 @@ import {Prisma} from "../generated/prisma/client.js";
 vi.mock('../lib/prisma.js', () => ({
     prisma: {
         company: {
+            findUniqueOrThrow: vi.fn(),
             findMany: vi.fn(),
             create: vi.fn(),
             update: vi.fn(),
@@ -35,6 +36,42 @@ describe('Company Routes', () => {
             expect(prisma.company.findMany).toHaveBeenCalledOnce();
         });
     })
+
+    describe('GET /companies/:id', () => {
+        const id = '999e4567-e89b-12d3-a456-426614174999';
+
+        it('should return a single company', async () => {
+            const mockCompany = {id, name: 'Test Corp'};
+
+            vi.mocked(prisma.company.findUniqueOrThrow).mockResolvedValue(mockCompany as any);
+
+            const response = await request(app).get(`${companies_url}/${id}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body).toEqual(mockCompany);
+            expect(prisma.company.findUniqueOrThrow).toHaveBeenCalledWith({
+                where: {id}
+            });
+        });
+
+        it('should return 404 if company not found', async () => {
+            const prismaError = new Prisma.PrismaClientKnownRequestError(
+                'Record not found',
+                {
+                    code: 'P2025',
+                    clientVersion: '7.7.0'
+                }
+            );
+
+            vi.mocked(prisma.company.findUniqueOrThrow).mockRejectedValue(prismaError);
+
+            const response = await request(app)
+                .get(`${companies_url}/${id}`);
+
+            expect(response.status).toBe(404);
+            expect(response.body.error.code).toBe("RESOURCE_NOT_FOUND");
+        });
+    });
 
     describe('POST /companies', () => {
         it('should create a new company', async () => {
