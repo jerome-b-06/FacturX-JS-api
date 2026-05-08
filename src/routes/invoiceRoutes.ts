@@ -2,7 +2,7 @@ import {Router} from 'express';
 import {
     createInvoice,
     deleteInvoice,
-    downloadInvoice,
+    downloadInvoice, getCompanyInvoiceById,
     getCompanyInvoices,
     updateInvoice
 } from "../services/invoiceService.js";
@@ -14,6 +14,8 @@ const router = Router({mergeParams: true});
 
 // GET /companies/:companyId/invoices
 router.get('/', asyncHandler(getCompanyInvoices));
+// GET /companies/:companyId/invoices/:id
+router.get('/:id', asyncHandler(getCompanyInvoiceById));
 // POST /invoices
 router.post('/', validationHandler(createInvoiceSchema), asyncHandler(createInvoice));
 // PUT /invoices/:id

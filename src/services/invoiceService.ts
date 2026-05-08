@@ -47,6 +47,25 @@ export const getCompanyInvoices = async (req: Request, res: Response, _next: Nex
     res.json(invoices);
 }
 
+export const getCompanyInvoiceById = async (req: Request, res: Response, _next: NextFunction) => {
+    const {companyId, id} = req.params;
+    if (typeof companyId !== 'string' || typeof id !== 'string') {
+        throw new AppError(
+            APP_ERROR_CODES.INVALID_INPUT,
+            "Invalid ID.",
+            400
+        );
+    }
+
+    const invoice = await prisma.invoice.findFirstOrThrow({
+        where: {id, companyId},
+        include: {
+            items: true
+        }
+    });
+    res.json(invoice);
+}
+
 export const createInvoice = async (req: Request, res: Response, _next: NextFunction) => {
     const {companyId} = req.params;
 

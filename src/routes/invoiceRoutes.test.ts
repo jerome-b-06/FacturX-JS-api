@@ -7,7 +7,7 @@ import {Prisma} from "../generated/prisma/client.js";
 vi.mock('../lib/prisma.js', () => ({
     prisma: {
         invoice: {
-            findUnique: vi.fn(),
+            findFirstOrThrow: vi.fn(),
             findMany: vi.fn(),
             create: vi.fn(),
             update: vi.fn(),
@@ -46,6 +46,46 @@ describe('Invoice Routes', () => {
             );
         });
     });
+
+    describe('GET /companies/:companyId/invoices/:id', () => {
+        const invoiceId = '999e4567-e89b-12d3-a456-426614174999'; // Fake invoice ID
+
+        it('should return a single invoice', async () => {
+            const mockInvoice = {id: invoiceId, invoiceNumber: 'INV-001', totalTTC: 120};
+
+            vi.mocked(prisma.invoice.findFirstOrThrow).mockResolvedValue(mockInvoice as any);
+
+            const response = await request(app).get(`${invoices_url}/${invoiceId}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body).toEqual(mockInvoice);
+            expect(prisma.invoice.findFirstOrThrow).toHaveBeenCalledWith({
+                where: {id: invoiceId, companyId},
+                include: {
+                    items: true
+                }
+            });
+        });
+
+        it('should return 404 if invoice not found', async () => {
+            const prismaError = new Prisma.PrismaClientKnownRequestError(
+                'Record not found',
+                {
+                    code: 'P2025',
+                    clientVersion: '7.7.0'
+                }
+            );
+
+            vi.mocked(prisma.invoice.findFirstOrThrow).mockRejectedValue(prismaError);
+
+            const response = await request(app)
+                .get(`${invoices_url}/${invoiceId}`);
+
+            expect(response.status).toBe(404);
+            expect(response.body.error.code).toBe("RESOURCE_NOT_FOUND");
+        });
+    });
+
 
     describe('POST /companies/:companyId/invoices', () => {
         it('should create a new invoice with valid data', async () => {
