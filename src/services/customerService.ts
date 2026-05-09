@@ -1,17 +1,10 @@
 import {prisma} from '../lib/prisma.js';
 import type {Request, Response, NextFunction} from "express"
 import type {Customer} from "../generated/prisma/client.js";
-import {AppError, APP_ERROR_CODES} from '../errors/AppError.js';
+import {extractAndValidateId, extractAndValidateIds} from '../lib/validationHelpers.js';
 
 export const getAllCompanyCustomers = async (req: Request, res: Response, _next: NextFunction) => {
-    const {companyId} = req.params;
-    if (typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const companyId = extractAndValidateId(req, 'companyId');
     await prisma.company.findUniqueOrThrow({
         where: {id: companyId},
     });
@@ -24,14 +17,7 @@ export const getAllCompanyCustomers = async (req: Request, res: Response, _next:
 }
 
 export const createCustomer = async (req: Request, res: Response, _next: NextFunction) => {
-    const {companyId} = req.params;
-    if (typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const companyId = extractAndValidateId(req, 'companyId');
     const newCustomer: Customer = await prisma.customer.create({
         data: {...req.body, companyId: companyId}
     });
@@ -39,14 +25,7 @@ export const createCustomer = async (req: Request, res: Response, _next: NextFun
 }
 
 export const updateCustomer = async (req: Request, res: Response, _next: NextFunction) => {
-    const {id, companyId} = req.params;
-    if (typeof id !== 'string' || typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const {id, companyId} = extractAndValidateIds(req, 'id', 'companyId');
 
     const updatedCustomer: Customer = await prisma.customer.update({
         where: {id, companyId},
@@ -56,14 +35,7 @@ export const updateCustomer = async (req: Request, res: Response, _next: NextFun
 }
 
 export const deleteCustomer = async (req: Request, res: Response, _next: NextFunction) => {
-    const {id, companyId} = req.params;
-    if (typeof id !== 'string' || typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const {id, companyId} = extractAndValidateIds(req, 'id', 'companyId');
 
     await prisma.customer.delete({
         where: {id, companyId}

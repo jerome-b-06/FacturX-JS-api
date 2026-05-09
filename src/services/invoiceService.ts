@@ -1,7 +1,7 @@
 import {prisma} from '../lib/prisma.js';
 import type {Request, Response, NextFunction} from "express"
 import type {Invoice, Item} from "../generated/prisma/client.js";
-import {AppError, APP_ERROR_CODES} from '../errors/AppError.js';
+import {extractAndValidateId, extractAndValidateIds} from '../lib/validationHelpers.js';
 import {defaultTemplate} from "../templates/defaultInvoice.js";
 import {PdfService} from "./pdfService.js";
 import {XmlService} from "./xmlService.js";
@@ -27,14 +27,7 @@ const calculateInvoiceTotals = (items: Item[]): InvoiceTotals => {
 };
 
 export const getCompanyInvoices = async (req: Request, res: Response, _next: NextFunction) => {
-    const {companyId} = req.params;
-    if (typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const companyId = extractAndValidateId(req, 'companyId');
 
     const invoices: Invoice[] = await prisma.invoice.findMany({
         where: {
@@ -48,14 +41,7 @@ export const getCompanyInvoices = async (req: Request, res: Response, _next: Nex
 }
 
 export const getCompanyInvoiceById = async (req: Request, res: Response, _next: NextFunction) => {
-    const {companyId, id} = req.params;
-    if (typeof companyId !== 'string' || typeof id !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const {companyId, id} = extractAndValidateIds(req, 'companyId', 'id');
 
     const invoice = await prisma.invoice.findFirstOrThrow({
         where: {id, companyId},
@@ -67,15 +53,7 @@ export const getCompanyInvoiceById = async (req: Request, res: Response, _next: 
 }
 
 export const createInvoice = async (req: Request, res: Response, _next: NextFunction) => {
-    const {companyId} = req.params;
-
-    if (typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID",
-            400
-        );
-    }
+    const companyId = extractAndValidateId(req, 'companyId');
 
     const {date, dueDate, customerId, customer, ...data} = req.body;
     const {totalHT, totalVAT, totalTTC, items} = calculateInvoiceTotals(data.items);
@@ -103,15 +81,7 @@ export const createInvoice = async (req: Request, res: Response, _next: NextFunc
 }
 
 export const updateInvoice = async (req: Request, res: Response, next: NextFunction) => {
-    const {companyId, id} = req.params;
-
-    if (typeof id !== 'string' || typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID",
-            400
-        );
-    }
+    const {companyId, id} = extractAndValidateIds(req, 'companyId', 'id');
 
     const {date, dueDate, customerId, customer, ...data} = req.body;
     if (data.date) data.date = new Date(date);
@@ -136,14 +106,7 @@ export const updateInvoice = async (req: Request, res: Response, next: NextFunct
 }
 
 export const deleteInvoice = async (req: Request, res: Response, _next: NextFunction) => {
-    const {companyId, id} = req.params;
-    if (typeof id !== 'string' || typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const {companyId, id} = extractAndValidateIds(req, 'companyId', 'id');
 
     await prisma.invoice.delete({
         where: {id, companyId},
@@ -153,14 +116,7 @@ export const deleteInvoice = async (req: Request, res: Response, _next: NextFunc
 
 export const downloadInvoice = async (req: Request, res: Response, _next: NextFunction) => {
 
-    const {id, companyId} = req.params;
-    if (typeof id !== 'string' || typeof companyId !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const {id, companyId} = extractAndValidateIds(req, 'id', 'companyId');
 
     const {customer, company, items, ...invoice} = await prisma.invoice.findFirstOrThrow({
         where: {
@@ -185,10 +141,10 @@ export const downloadInvoice = async (req: Request, res: Response, _next: NextFu
         items
     };
 
-    // le PDF (On utilise le template de la DB s'il existe, sinon le défaut)
+    // Use the PDF from the DB if it exists, otherwise use the default one
     const templateToUse = company.pdfTemplate || defaultTemplate;
 
-    // PDF Visuel
+    // Visual PDF
     const visualPdfBuffer = await PdfService.generateVisualPdf(templateToUse, templateData);
 
     // XML (CII Std)
@@ -197,7 +153,7 @@ export const downloadInvoice = async (req: Request, res: Response, _next: NextFu
     const finalBuffer = await PdfService.attachFacturX(visualPdfBuffer, xmlContent);
 
     res.setHeader('Content-Type', 'application/pdf');
-    // 'inline' affiche le PDF dans le navigateur, 'attachment' force le téléchargement
+    // 'inline' displays the PDF in the browser, 'attachment' forces download
     res.setHeader('Content-Disposition', `inline; filename="Facture_${invoice.invoiceNumber}.pdf"`);
     res.send(finalBuffer);
 

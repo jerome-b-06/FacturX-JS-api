@@ -1,7 +1,7 @@
 import {prisma} from '../lib/prisma.js';
 import type {Request, Response, NextFunction} from "express"
 import type {Company} from "../generated/prisma/client.js";
-import {AppError, APP_ERROR_CODES} from '../errors/AppError.js';
+import {extractAndValidateId} from '../lib/validationHelpers.js';
 
 export const getAllCompanies = async (_req: Request, res: Response, next: NextFunction) => {
     const companies: Company[] = await prisma.company.findMany();
@@ -9,14 +9,7 @@ export const getAllCompanies = async (_req: Request, res: Response, next: NextFu
 }
 
 export const getCompany = async (req: Request, res: Response, next: NextFunction) => {
-    const {id} = req.params;
-    if (typeof id !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const id = extractAndValidateId(req);
     const company: Company = await prisma.company.findUniqueOrThrow({
         where: {id}
     });
@@ -31,14 +24,7 @@ export const createCompany = async (req: Request, res: Response, next: NextFunct
 }
 
 export const updateCompany = async (req: Request, res: Response, next: NextFunction) => {
-    const {id} = req.params;
-    if (typeof id !== 'string') {
-       throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const id = extractAndValidateId(req);
 
     const updatedCompany: Company = await prisma.company.update({
         where: {id},
@@ -48,14 +34,7 @@ export const updateCompany = async (req: Request, res: Response, next: NextFunct
 }
 
 export const deleteCompany = async (req: Request, res: Response, next: NextFunction) => {
-    const {id} = req.params;
-    if (typeof id !== 'string') {
-        throw new AppError(
-            APP_ERROR_CODES.INVALID_INPUT,
-            "Invalid ID.",
-            400
-        );
-    }
+    const id = extractAndValidateId(req);
 
     await prisma.company.delete({
         where: {id}
