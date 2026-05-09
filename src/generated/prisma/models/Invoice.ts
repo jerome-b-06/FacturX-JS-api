@@ -49,6 +49,7 @@ export type InvoiceMinAggregateOutputType = {
   totalHT: number | null
   totalVAT: number | null
   totalTTC: number | null
+  htmlContent: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -64,6 +65,7 @@ export type InvoiceMaxAggregateOutputType = {
   totalHT: number | null
   totalVAT: number | null
   totalTTC: number | null
+  htmlContent: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -79,6 +81,7 @@ export type InvoiceCountAggregateOutputType = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -108,6 +111,7 @@ export type InvoiceMinAggregateInputType = {
   totalHT?: true
   totalVAT?: true
   totalTTC?: true
+  htmlContent?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -123,6 +127,7 @@ export type InvoiceMaxAggregateInputType = {
   totalHT?: true
   totalVAT?: true
   totalTTC?: true
+  htmlContent?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -138,6 +143,7 @@ export type InvoiceCountAggregateInputType = {
   totalHT?: true
   totalVAT?: true
   totalTTC?: true
+  htmlContent?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -240,6 +246,7 @@ export type InvoiceGroupByOutputType = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent: string | null
   createdAt: Date
   updatedAt: Date
   _count: InvoiceCountAggregateOutputType | null
@@ -278,6 +285,7 @@ export type InvoiceWhereInput = {
   totalHT?: Prisma.FloatFilter<"Invoice"> | number
   totalVAT?: Prisma.FloatFilter<"Invoice"> | number
   totalTTC?: Prisma.FloatFilter<"Invoice"> | number
+  htmlContent?: Prisma.StringNullableFilter<"Invoice"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Invoice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Invoice"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
@@ -296,6 +304,7 @@ export type InvoiceOrderByWithRelationInput = {
   totalHT?: Prisma.SortOrder
   totalVAT?: Prisma.SortOrder
   totalTTC?: Prisma.SortOrder
+  htmlContent?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
@@ -317,6 +326,7 @@ export type InvoiceWhereUniqueInput = Prisma.AtLeast<{
   totalHT?: Prisma.FloatFilter<"Invoice"> | number
   totalVAT?: Prisma.FloatFilter<"Invoice"> | number
   totalTTC?: Prisma.FloatFilter<"Invoice"> | number
+  htmlContent?: Prisma.StringNullableFilter<"Invoice"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Invoice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Invoice"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
@@ -335,6 +345,7 @@ export type InvoiceOrderByWithAggregationInput = {
   totalHT?: Prisma.SortOrder
   totalVAT?: Prisma.SortOrder
   totalTTC?: Prisma.SortOrder
+  htmlContent?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.InvoiceCountOrderByAggregateInput
@@ -358,6 +369,7 @@ export type InvoiceScalarWhereWithAggregatesInput = {
   totalHT?: Prisma.FloatWithAggregatesFilter<"Invoice"> | number
   totalVAT?: Prisma.FloatWithAggregatesFilter<"Invoice"> | number
   totalTTC?: Prisma.FloatWithAggregatesFilter<"Invoice"> | number
+  htmlContent?: Prisma.StringNullableWithAggregatesFilter<"Invoice"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Invoice"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Invoice"> | Date | string
 }
@@ -371,6 +383,7 @@ export type InvoiceCreateInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutInvoicesInput
@@ -389,6 +402,7 @@ export type InvoiceUncheckedCreateInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.ItemUncheckedCreateNestedManyWithoutInvoiceInput
@@ -403,6 +417,7 @@ export type InvoiceUpdateInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutInvoicesNestedInput
@@ -421,6 +436,7 @@ export type InvoiceUncheckedUpdateInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.ItemUncheckedUpdateManyWithoutInvoiceNestedInput
@@ -437,6 +453,7 @@ export type InvoiceCreateManyInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -450,6 +467,7 @@ export type InvoiceUpdateManyMutationInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -465,6 +483,7 @@ export type InvoiceUncheckedUpdateManyInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -490,6 +509,7 @@ export type InvoiceCountOrderByAggregateInput = {
   totalHT?: Prisma.SortOrder
   totalVAT?: Prisma.SortOrder
   totalTTC?: Prisma.SortOrder
+  htmlContent?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -511,6 +531,7 @@ export type InvoiceMaxOrderByAggregateInput = {
   totalHT?: Prisma.SortOrder
   totalVAT?: Prisma.SortOrder
   totalTTC?: Prisma.SortOrder
+  htmlContent?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -526,6 +547,7 @@ export type InvoiceMinOrderByAggregateInput = {
   totalHT?: Prisma.SortOrder
   totalVAT?: Prisma.SortOrder
   totalTTC?: Prisma.SortOrder
+  htmlContent?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -660,6 +682,7 @@ export type InvoiceCreateWithoutCompanyInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutInvoicesInput
@@ -676,6 +699,7 @@ export type InvoiceUncheckedCreateWithoutCompanyInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.ItemUncheckedCreateNestedManyWithoutInvoiceInput
@@ -721,6 +745,7 @@ export type InvoiceScalarWhereInput = {
   totalHT?: Prisma.FloatFilter<"Invoice"> | number
   totalVAT?: Prisma.FloatFilter<"Invoice"> | number
   totalTTC?: Prisma.FloatFilter<"Invoice"> | number
+  htmlContent?: Prisma.StringNullableFilter<"Invoice"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Invoice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Invoice"> | Date | string
 }
@@ -734,6 +759,7 @@ export type InvoiceCreateWithoutCustomerInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutInvoicesInput
@@ -750,6 +776,7 @@ export type InvoiceUncheckedCreateWithoutCustomerInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.ItemUncheckedCreateNestedManyWithoutInvoiceInput
@@ -790,6 +817,7 @@ export type InvoiceCreateWithoutItemsInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutInvoicesInput
@@ -807,6 +835,7 @@ export type InvoiceUncheckedCreateWithoutItemsInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -836,6 +865,7 @@ export type InvoiceUpdateWithoutItemsInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutInvoicesNestedInput
@@ -853,6 +883,7 @@ export type InvoiceUncheckedUpdateWithoutItemsInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -867,6 +898,7 @@ export type InvoiceCreateManyCompanyInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -880,6 +912,7 @@ export type InvoiceUpdateWithoutCompanyInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutInvoicesNestedInput
@@ -896,6 +929,7 @@ export type InvoiceUncheckedUpdateWithoutCompanyInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.ItemUncheckedUpdateManyWithoutInvoiceNestedInput
@@ -911,6 +945,7 @@ export type InvoiceUncheckedUpdateManyWithoutCompanyInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -925,6 +960,7 @@ export type InvoiceCreateManyCustomerInput = {
   totalHT: number
   totalVAT: number
   totalTTC: number
+  htmlContent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -938,6 +974,7 @@ export type InvoiceUpdateWithoutCustomerInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutInvoicesNestedInput
@@ -954,6 +991,7 @@ export type InvoiceUncheckedUpdateWithoutCustomerInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.ItemUncheckedUpdateManyWithoutInvoiceNestedInput
@@ -969,6 +1007,7 @@ export type InvoiceUncheckedUpdateManyWithoutCustomerInput = {
   totalHT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalVAT?: Prisma.FloatFieldUpdateOperationsInput | number
   totalTTC?: Prisma.FloatFieldUpdateOperationsInput | number
+  htmlContent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1015,6 +1054,7 @@ export type InvoiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   totalHT?: boolean
   totalVAT?: boolean
   totalTTC?: boolean
+  htmlContent?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -1034,6 +1074,7 @@ export type InvoiceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   totalHT?: boolean
   totalVAT?: boolean
   totalTTC?: boolean
+  htmlContent?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -1051,6 +1092,7 @@ export type InvoiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   totalHT?: boolean
   totalVAT?: boolean
   totalTTC?: boolean
+  htmlContent?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -1068,11 +1110,12 @@ export type InvoiceSelectScalar = {
   totalHT?: boolean
   totalVAT?: boolean
   totalTTC?: boolean
+  htmlContent?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type InvoiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "invoiceNumber" | "date" | "dueDate" | "status" | "companyId" | "customerId" | "totalHT" | "totalVAT" | "totalTTC" | "createdAt" | "updatedAt", ExtArgs["result"]["invoice"]>
+export type InvoiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "invoiceNumber" | "date" | "dueDate" | "status" | "companyId" | "customerId" | "totalHT" | "totalVAT" | "totalTTC" | "htmlContent" | "createdAt" | "updatedAt", ExtArgs["result"]["invoice"]>
 export type InvoiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
@@ -1106,6 +1149,7 @@ export type $InvoicePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     totalHT: number
     totalVAT: number
     totalTTC: number
+    htmlContent: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["invoice"]>
@@ -1544,6 +1588,7 @@ export interface InvoiceFieldRefs {
   readonly totalHT: Prisma.FieldRef<"Invoice", 'Float'>
   readonly totalVAT: Prisma.FieldRef<"Invoice", 'Float'>
   readonly totalTTC: Prisma.FieldRef<"Invoice", 'Float'>
+  readonly htmlContent: Prisma.FieldRef<"Invoice", 'String'>
   readonly createdAt: Prisma.FieldRef<"Invoice", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Invoice", 'DateTime'>
 }

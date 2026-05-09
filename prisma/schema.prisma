@@ -79,6 +79,9 @@ model Invoice {
   totalVAT Float
   totalTTC Float
 
+  // HTML content for PDF generation
+  htmlContent String? @db.Text
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

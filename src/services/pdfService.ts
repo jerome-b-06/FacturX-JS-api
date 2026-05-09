@@ -1,14 +1,9 @@
 import puppeteer from 'puppeteer';
-import Handlebars from 'handlebars';
 import { PDFDocument } from 'pdf-lib';
 import { pdfConfig } from '../lib/pdfConfig.js';
 
 export const PdfService = {
-    generateVisualPdf: async (templateHtml: string, data: any): Promise<Buffer> => {
-        // Handlebars replaces {{variable}} with actual data
-        const template = Handlebars.compile(templateHtml);
-        const htmlContent = template(data);
-
+    generateVisualPdf: async (htmlContent: string): Promise<Buffer> => {
         const browser = await puppeteer.launch({
             headless: pdfConfig.headless,
             args: ['--no-sandbox', '--disable-setuid-sandbox']

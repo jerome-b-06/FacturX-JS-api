@@ -15,6 +15,10 @@ vi.mock('../lib/prisma.js', () => ({
         },
         company: {
             findUnique: vi.fn(),
+            findUniqueOrThrow: vi.fn(),
+        },
+        customer: {
+            findUniqueOrThrow: vi.fn(),
         }
     },
 }));
@@ -30,7 +34,7 @@ describe('Invoice Routes', () => {
     describe('GET /companies/:companyId/invoices', () => {
         it('should return a list of invoices', async () => {
             const mockInvoices = [
-                {id: '1', invoiceNumber: 'INV-001', totalTTC: 120},
+                {id: '1', invoiceNumber: 'INV-001', totalTTC: 120, htmlContent: '<html>Sample invoice HTML</html>'},
             ];
 
             vi.mocked(prisma.invoice.findMany).mockResolvedValue(mockInvoices as any);
@@ -51,7 +55,7 @@ describe('Invoice Routes', () => {
         const invoiceId = '999e4567-e89b-12d3-a456-426614174999'; // Fake invoice ID
 
         it('should return a single invoice', async () => {
-            const mockInvoice = {id: invoiceId, invoiceNumber: 'INV-001', totalTTC: 120};
+            const mockInvoice = {id: invoiceId, invoiceNumber: 'INV-001', totalTTC: 120, htmlContent: '<html>Sample invoice HTML</html>'};
 
             vi.mocked(prisma.invoice.findFirstOrThrow).mockResolvedValue(mockInvoice as any);
 
@@ -98,12 +102,19 @@ describe('Invoice Routes', () => {
                 ]
             };
 
+            vi.mocked(prisma.company.findUniqueOrThrow).mockResolvedValue({
+                id: companyId,
+                name: 'Test Company',
+                pdfTemplate: null,
+            } as any);
+
             vi.mocked(prisma.invoice.create).mockResolvedValue({
                 id: '99',
                 ...newInvoiceData,
                 totalHT: 500,
                 totalVAT: 100,
                 totalTTC: 600,
+                htmlContent: '<html>Generated invoice HTML</html>',
             } as any);
 
             const response = await request(app)
@@ -136,6 +147,36 @@ describe('Invoice Routes', () => {
                 ]
             };
 
+            const currentInvoice = {
+                id: invoiceId,
+                companyId: companyId,
+                customerId: '999d4567-e89b-12d3-a456-426614174999',
+                invoiceNumber: 'INV-001',
+                date: new Date(),
+                dueDate: new Date(),
+                totalHT: 100,
+                totalVAT: 20,
+                totalTTC: 120,
+                status: 'DRAFT',
+                htmlContent: '<html>Old HTML</html>',
+                company: {
+                    id: companyId,
+                    name: 'Test Company',
+                    pdfTemplate: null,
+                },
+                customer: {
+                    id: '999d4567-e89b-12d3-a456-426614174999',
+                    name: 'Test Customer',
+                },
+                items: [
+                    {description: 'Old Item', quantity: 1, unitPrice: 100, vatRate: 20, totalHT: 100}
+                ],
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            vi.mocked(prisma.invoice.findFirstOrThrow).mockResolvedValue(currentInvoice as any);
+
             const updatedInvoice = {
                 id: invoiceId,
                 companyId: companyId,
@@ -144,7 +185,8 @@ describe('Invoice Routes', () => {
                 totalHT: 10,
                 totalVAT: 2,
                 totalTTC: 12,
-                items: updatePayload.items
+                items: updatePayload.items,
+                htmlContent: '<html>Updated invoice HTML</html>',
             };
             vi.mocked(prisma.invoice.update).mockResolvedValue(updatedInvoice as any);
 

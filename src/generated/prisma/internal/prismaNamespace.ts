@@ -789,6 +789,7 @@ export const InvoiceScalarFieldEnum = {
   totalHT: 'totalHT',
   totalVAT: 'totalVAT',
   totalTTC: 'totalTTC',
+  htmlContent: 'htmlContent',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
